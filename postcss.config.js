@@ -1,0 +1,2 @@
+/* This file is intentionally left empty to avoid conflicts.
+   Please use postcss.config.cjs for PostCSS configuration. */

@@ -5,19 +5,21 @@ import EmployerAuth from './pages/Employer/EmployerAuth'
 import AdminAuth from './pages/Admin/AdminAuth'
 import ForgotPassword from './pages/ForgotPassword'
 import GraduateDashboard from './pages/Graduate/GraduateDashboard';
+import TailwindTest from './components/TailwindTest.jsx'
 import './App.css'
 
 function App() {
   return (
     <BrowserRouter>
- <Route path="/" element={<Welcome />} />
-       <Route path="/login/graduate" element={<GraduateAuth mode="login" />} />
-       <Route path="/signup/graduate" element={<GraduateAuth mode="signup" />} />
-       <Route path="/login/employer" element={<EmployerAuth mode="login" />} />
-       <Route path="/signup/employer" element={<EmployerAuth mode="signup" />} />
-       <Route path="/login/admin" element={<AdminAuth />} />
-       <Route path="/forgot-password" element={<ForgotPassword />} />
-       <Route path="/graduate/dashboard" element={<GraduateDashboard />} />
+      <Route path="/tailwind-test" element={<TailwindTest />} />
+      <Route path="/" element={<Welcome />} />
+      <Route path="/login/graduate" element={<GraduateAuth mode="login" />} />
+      <Route path="/signup/graduate" element={<GraduateAuth mode="signup" />} />
+      <Route path="/login/employer" element={<EmployerAuth mode="login" />} />
+      <Route path="/signup/employer" element={<EmployerAuth mode="signup" />} />
+      <Route path="/login/admin" element={<AdminAuth />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/graduate/dashboard" element={<GraduateDashboard />} />
     </BrowserRouter>
   )
 }
