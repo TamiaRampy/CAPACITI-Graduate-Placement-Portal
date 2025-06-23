@@ -1,15 +1,14 @@
-.auth-container {
+.employer-auth-bg {
   min-height: 100vh;
   width: 100vw;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #e0e7ff 0%, #ffe0e7 100%);
   box-sizing: border-box;
 }
 
-.auth-form-box {
+.employer-auth-container {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
@@ -47,7 +46,8 @@
 .auth-logo {
   width: 80px;
   height: auto;
-  margin-bottom: 20px;
+  margin: 20px 0;
+  align-self: center;
 }
 
 .auth-title {
@@ -83,7 +83,7 @@
   border-radius: 8px;
   font-size: 16px;
   background: #fff;
-  color: #333; /* FIXED: Changed from #000 to #333 for better readability - NOT WHITE */
+  color: #333; /* Changed from #000 to #333 for better readability */
   box-sizing: border-box;
   transition: border-color 0.3s ease;
 }
@@ -137,11 +137,6 @@
 
 .auth-link:hover {
   color: #0066cc;
-}
-
-.auth-links {
-  text-align: center;
-  margin: 12px 0;
 }
 
 /* FIXED: Made switch text and links properly visible */
@@ -228,7 +223,7 @@ input[type="password"] + button:hover,
 }
 
 @media (max-width: 600px) {
-  .auth-form-box {
+  .employer-auth-container {
     padding: 20px;
     max-width: 95vw;
     margin: 16px;

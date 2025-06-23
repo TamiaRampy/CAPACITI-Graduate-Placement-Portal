@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
-import { auth } from '../../firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState } from "react";
+import { auth } from "../../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { Link } from "react-router-dom";
+import "../../styles/AdminAuth.css";
 
-const AdminAuth: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+interface Props {
+  mode: "login" | "signup";
+}
+
+const AdminAuth: React.FC<Props> = ({ mode }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,43 +24,53 @@ const AdminAuth: React.FC = () => {
   };
 
   return (
-    <div
-      className="auth-container"
-      style={{
-        maxWidth: 400,
-        margin: '40px auto',
-        padding: 32,
-        border: '2px solid #222',
-        borderRadius: 8,
-        boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-        background: '#fff',
-        color: '#000'
-      }}
-    >
-      <h2 style={{ textAlign: 'center', color: '#000' }}>Admin Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          style={{ width: '100%', marginBottom: 12, padding: 8, color: '#000', background: '#fff', border: '1px solid #222' }}
+    <div className="admin-auth-bg">
+      <div className="admin-auth-container">
+        <Link to="/" className="back-to-welcome-btn">
+          ← Back to Welcome
+        </Link>
+        <img
+          src="/Images/CAPACITI-LOGO.jpg"
+          alt="CAPACITI Logo"
+          className="auth-logo"
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          style={{ width: '100%', marginBottom: 12, padding: 8, color: '#000', background: '#fff', border: '1px solid #222' }}
-        />
-        <button type="submit" style={{ width: '100%', padding: 10, background: '#222', color: '#fff', border: 'none' }}>
-          Login
-        </button>
-        {error && <p style={{ color: 'red', marginTop: 8 }}>{error}</p>}
-      </form>
-      {/* No signup link for admin */}
+        <h2 className="auth-title">Admin Login</h2>
+        <p className="auth-subtitle">
+          Empowering graduates. Connecting employers.
+        </p>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="auth-input"
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="auth-input"
+            />
+          </div>
+          <button type="submit" className="auth-button">
+            Login
+          </button>
+          {error && <p className="auth-error">{error}</p>}
+        </form>
+        <div className="auth-links">
+          <Link to="/forgot-password" className="auth-link">
+            Forgot Password?
+          </Link>
+        </div>
+        <footer className="auth-footer">© 2025 CAPACITI Programme</footer>
+      </div>
     </div>
   );
 };

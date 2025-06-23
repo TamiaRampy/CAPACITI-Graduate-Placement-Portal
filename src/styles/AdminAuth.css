@@ -1,15 +1,14 @@
-.auth-container {
+.admin-auth-bg {
   min-height: 100vh;
   width: 100vw;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #e0e7ff 0%, #ffe0e7 100%);
   box-sizing: border-box;
 }
 
-.auth-form-box {
+.admin-auth-container {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
@@ -72,7 +71,7 @@
 /* FIXED: Increased spacing between input groups */
 .input-group {
   position: relative;
-  margin-bottom: 24px; /* Increased from 16px to 24px for better spacing */
+  margin-bottom: 24px; /* Increased from 14px to 24px for better spacing */
 }
 
 .auth-input {
@@ -83,7 +82,7 @@
   border-radius: 8px;
   font-size: 16px;
   background: #fff;
-  color: #333; /* FIXED: Changed from #000 to #333 for better readability - NOT WHITE */
+  color: #333; /* Changed from #000 to #333 for better readability */
   box-sizing: border-box;
   transition: border-color 0.3s ease;
 }
@@ -144,30 +143,6 @@
   margin: 12px 0;
 }
 
-/* FIXED: Made switch text and links properly visible */
-.auth-switch {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.auth-switch-text {
-  color: #555; /* Changed from potentially invisible color to dark gray */
-  font-size: 14px;
-  margin: 0;
-}
-
-.auth-switch-link {
-  color: #004a99; /* Made sure link is visible with proper color */
-  text-decoration: underline;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.auth-switch-link:hover {
-  color: #0066cc;
-  text-decoration: none;
-}
-
 .auth-error {
   color: #dc2626; /* Better red color for errors */
   margin: 12px 0;
@@ -177,17 +152,6 @@
   padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid #fecaca;
-}
-
-.auth-success {
-  color: #059669; /* Better green color for success */
-  margin: 12px 0;
-  text-align: center;
-  font-size: 14px;
-  background-color: #f0fdf4;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #bbf7d0;
 }
 
 .auth-footer {
@@ -228,7 +192,7 @@ input[type="password"] + button:hover,
 }
 
 @media (max-width: 600px) {
-  .auth-form-box {
+  .admin-auth-container {
     padding: 20px;
     max-width: 95vw;
     margin: 16px;
