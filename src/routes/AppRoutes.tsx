@@ -5,6 +5,7 @@ import EmployerAuth from '../pages/Employer/EmployerAuth';
 import GraduateDashboard from '../pages/Graduate/GraduateDashboard';
 import ForgotPassword from '../pages/ForgotPassword';
 import AdminAuth from '../pages/Admin/AdminAuth';
+import GraduateProfile from '../pages/Graduate/GraduateProfile';
 
 function AppRoutes() {
   return (
@@ -18,6 +19,7 @@ function AppRoutes() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/login/admin" element={<AdminAuth mode="login" />} />
       <Route path="/signup/admin" element={<AdminAuth mode="signup" />} />
+      <Route path="/graduate/profile" element={<GraduateProfile />} />
     </Routes>
   );
 }
