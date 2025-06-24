@@ -3,63 +3,77 @@
   width: 100vw;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Align to top, but use padding for spacing */
   background: linear-gradient(135deg, #e0e7ff 0%, #ffe0e7 100%);
   box-sizing: border-box;
+  padding-top: 48px;   /* Add space at the top */
+  padding-bottom: 48px;/* Add space at the bottom */
 }
 
 .employer-auth-container {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-  padding: 32px;
-  max-width: 400px;
+  padding: 16px 16px;           /* Reduce padding */
+  max-width: 460px;             /* Slightly smaller width */
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  max-height: none;             /* Remove max-height */
+  overflow-y: visible;          /* Remove scrolling */
 }
 
 .back-to-welcome-btn {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  color: #004a99;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #ff6f61;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  background-color: transparent;
-  border: 1px solid #004a99;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.back-to-welcome-btn:hover {
-  background-color: #004a99;
-  color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 74, 153, 0.2);
+.back-to-welcome-btn:hover,
+.back-to-welcome-btn:focus {
+  color: #ff6f61;
+  text-decoration: underline;
+}
+
+.back-arrow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.back-to-welcome-btn:hover .back-arrow-icon,
+.back-to-welcome-btn:focus .back-arrow-icon {
+  transform: translateX(-4px) scale(1.1) rotate(-8deg);
 }
 
 .auth-logo {
-  width: 80px;
-  height: auto;
-  margin: 20px 0;
-  align-self: center;
+  width: 4rem;                  /* Smaller logo */
+  margin: 0 auto 1rem auto;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
 }
 
 .auth-title {
-  margin-bottom: 8px;
-  color: #004a99;
+  color: #0c3968 !important;
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: 1.3rem;            /* Smaller font */
   text-align: center;
+  margin-bottom: 2px; /* Was 8px */
 }
 
 .auth-subtitle {
-  margin-bottom: 32px;
+  margin-bottom: 20px; /* Was 32px */
   color: #333;
   font-size: 1rem;
   text-align: center;
@@ -72,14 +86,14 @@
 /* FIXED: Increased spacing between input groups */
 .input-group {
   position: relative;
-  margin-bottom: 24px; /* Increased from 16px to 24px for better spacing */
+  margin-bottom: 18px; /* Was 24px, now 18px */
 }
 
 .auth-input {
   max-width: 100%;
   width: 100%;
   padding: 14px; /* Removed left padding since no icons */
-  border: 1px solid #004a99;
+  border: 1px solid #0c3968;
   border-radius: 8px;
   font-size: 16px;
   background: #fff;
@@ -90,7 +104,7 @@
 
 .auth-input:focus {
   outline: none;
-  border-color: #0066cc;
+  border-color: #0c3968;
   box-shadow: 0 0 0 2px rgba(0, 74, 153, 0.1);
 }
 
@@ -110,7 +124,7 @@
 .auth-button {
   width: 100%;
   padding: 14px; /* Increased padding */
-  background: #004a99;
+  background: #0c3968;
   color: #fff;
   border: none;
   border-radius: 24px;
@@ -122,44 +136,20 @@
 }
 
 .auth-button:hover {
-  background: #003366;
+  background: #0c3968;
 }
 
-.auth-link {
-  color: #004a99;
-  text-decoration: underline;
-  font-size: 15px;
-  display: block;
-  text-align: center;
-  margin: 12px 0;
-  transition: color 0.3s ease;
-}
-
-.auth-link:hover {
-  color: #0066cc;
-}
-
-/* FIXED: Made switch text and links properly visible */
-.auth-switch {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.auth-switch-text {
-  color: #555; /* Changed from potentially invisible color to dark gray */
-  font-size: 14px;
-  margin: 0;
-}
-
+.auth-link,
 .auth-switch-link {
-  color: #004a99; /* Made sure link is visible with proper color */
+  color: #0c3968 !important; /* Login, Signup, and Forgot Password links */
   text-decoration: underline;
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
+.auth-link:hover,
 .auth-switch-link:hover {
-  color: #0066cc;
+  color: #0c3968 !important;
   text-decoration: none;
 }
 
