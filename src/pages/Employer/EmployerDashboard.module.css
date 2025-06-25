@@ -1,0 +1,192 @@
+.dashboardContainer {
+  width: 95vw;
+  max-width: 1200px;
+  height: 95vh;
+  margin: 0 auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f9fafb;
+  padding: 50px 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    width: 90vw;
+    height: auto;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    padding: 30px 20px;
+  }
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #111827;
+}
+
+.logoutButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.logoutButton:hover {
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.logoutIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.welcomeMessage {
+  font-size: 1.125rem;
+  margin-bottom: 25px;
+  color: #374151;
+  width: 100%;
+}
+
+.buttonGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.actionButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 0;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.4s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 6px 15px rgba(118, 75, 162, 0.6);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.actionButton:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.8);
+  transform: scale(1.1);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.actionButton:active {
+  transform: scale(0.95);
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.6);
+}
+
+.buttonIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.statsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  width: 100%;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.statCard {
+  background-color: white;
+  flex: 1 1 30%;
+  margin: 0 8px;
+  padding: 20px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  text-align: center;
+  transition: transform 0.3s ease;
+  cursor: default;
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.statNumber {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.statLabel {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.recentActivity {
+  background-color: white;
+  padding: 20px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 #f9fafb;
+}
+
+.recentActivity::-webkit-scrollbar {
+  width: 8px;
+}
+
+.recentActivity::-webkit-scrollbar-track {
+  background: #f9fafb;
+  border-radius: 10px;
+}
+
+.recentActivity::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 10px;
+  border: 2px solid #f9fafb;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 15px;
+  color: #111827;
+}
+
+.noActivity {
+  font-size: 1rem;
+  color: #6b7280;
+}
