@@ -1,0 +1,111 @@
+ou’ve structured your frontend project by user roles (Admin, Employer, Graduate) and pages for each. To represent this in Firebase (Firestore or Realtime Database), you’d typically create tables (collections) that correspond to your data model, not necessarily your frontend folder structure.
+
+But based on your folders, here’s a suggested Firebase Firestore structure (normalized and role-based):
+
+📦 Firestore Collections (Tables)
+1. users
+Used for all user accounts — Admins, Employers, Graduates.
+
+Field	Type	Description
+uid	string	Firebase Auth UID
+role	string	"admin", "employer", "graduate"
+name	string	Full name
+email	string	Email address
+createdAt	timestamp	Account creation time
+profileCompleted	boolean	For graduate onboarding
+...	any	Other shared fields
+
+2. adminMetrics (or analytics)
+For pages like AdminDashboard, EmployerMetrics, PlacementAnalytics
+
+Field	Type	Description
+totalUsers	number	Total users in the system
+totalEmployers	number	Employers onboarded
+jobsPosted	number	Total jobs posted
+placementSuccess	number	Successful placements
+updatedAt	timestamp	Last updated time
+
+3. employers
+Separate employer profiles (extended data beyond users)
+
+Field	Type	Description
+uid	string	Link to users.uid
+companyName	string	Employer's company name
+verified	boolean	Admin approval flag
+jobs	array	References to jobs documents
+
+4. graduates
+For graduates’ extended data (like CV, career path)
+
+Field	Type	Description
+uid	string	Link to users.uid
+careerPath	string	AlumniCareerPath info
+applicationTracker	array/map	Tracked applications
+profile	map	GraduateProfile data
+skills	array	Skills for matching
+jobsMatched	array	References to jobs
+
+5. jobs
+Posted by employers and applied to by graduates
+
+Field	Type	Description
+id	string	Auto ID or custom UID
+title	string	Job title
+description	string	Full job description
+employerId	string	UID of the employer
+postedAt	timestamp	Date job was posted
+applications	array	Array of graduate UIDs
+
+6. applications
+Track job applications (Job ID + Graduate UID combo)
+
+Field	Type	Description
+graduateId	string	UID of the applicant
+jobId	string	Job ID
+status	string	"pending", "interview", "rejected"
+submittedAt	timestamp	When it was submitted
+notes	string	Optional notes
+
+7. interviews
+Scheduled interviews
+
+Field	Type	Description
+jobId	string	For which job
+graduateId	string	Candidate invited
+employerId	string	Who scheduled it
+scheduledAt	timestamp	Date/time of interview
+meetingLink	string	Zoom/Google Meet link
+
+8. authLogs (optional)
+Track logins, password resets, etc.
+
+Field	Type	Description
+uid	string	User who triggered event
+type	string	e.g., "login", "reset"
+time	timestamp	Event time
+ip	string	IP address (optional)
+
+🔑 Firebase Auth
+Use Firebase Authentication to manage:
+
+Sign up / Sign in
+
+Role assignment on users collection
+
+Email verification
+
+Password resets
+
+📘 Mapping Your Pages to Firebase
+Page	Backed By Collection(s)
+AdminAuth.tsx	Firebase Auth + users
+AdminDashboard.tsx	adminMetrics, users, jobs
+EmployerMetrics.tsx	employers, jobs, graduates
+ManageUsers.tsx	users
+PlacementAnalytics.tsx	applications, jobs
+EmployerAuth.tsx	Firebase Auth + users
+PostJob.tsx	jobs
+ScheduleInterviews.tsx	interviews
+GraduateProfile.tsx	graduates
+ApplyJob.tsx	applications, jobs
+JobMatchingFeed.tsx	jobs, graduates

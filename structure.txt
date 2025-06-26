@@ -67,22 +67,34 @@
 ✅ PowerShell Script for Clean Project Structure (Only Folders & Files, No node_modules, .git, etc.)
 Copy and paste this into your PowerShell terminal:
 
-powershell
-Copy
-Edit
 $excluded = @("node_modules", ".git", "dist", "build", "coverage", "out", ".next", "obj", "bin")
 
-function Show-Tree($path, $indent = "") {
-    $items = Get-ChildItem -LiteralPath $path | Where-Object { $excluded -notcontains $_.Name }
+function Show-Tree {
+    param (
+        [string]$Path = ".",
+        [string]$Indent = "",
+        [bool]$IsLast = $true
+    )
 
-    foreach ($item in $items) {
+    $items = Get-ChildItem -LiteralPath $Path | Where-Object { $excluded -notcontains $_.Name }
+    $itemCount = $items.Count
+
+    for ($i = 0; $i -lt $itemCount; $i++) {
+        $item = $items[$i]
+        $isLastItem = ($i -eq $itemCount - 1)
+        $connector = if ($isLastItem) { "└── " } else { "├── " }
+
+        Write-Host "$Indent$connector$($item.Name)"
+
         if ($item.PSIsContainer) {
-            Write-Host "$indent├── $($item.Name)"
-            Show-Tree $item.FullName "$indent│   "
-        } else {
-            Write-Host "$indent└── $($item.Name)"
+            if ($isLastItem) {
+                $newIndent = "$Indent    "
+            } else {
+                $newIndent = "$Indent│   "
+            }
+            Show-Tree -Path $item.FullName -Indent $newIndent -IsLast $isLastItem
         }
     }
 }
 
-Show-Tree "."
+Show-Tree
