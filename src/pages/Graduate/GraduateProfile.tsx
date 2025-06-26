@@ -1,4 +1,16 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { auth, db, storage } from "../../firebase";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from  '../../ui/avatar';
 import '../../styles/Profile.css';
@@ -20,9 +32,13 @@ type Section =
   | 'languages'
   | 'security';
 
-const ProfilePage = () => {
-  const navigate = useNavigate();
-  const [cvFileName, setCvFileName] = useState('');
+const GraduateProfile = () => {
+  const [fullName, setFullName] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
+  const [location, setLocation] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [cvUrl, setCvUrl] = useState("");
+  const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState<Record<Section, boolean>>({
     personal: false,
     contact: false,
@@ -34,18 +50,116 @@ const ProfilePage = () => {
     security: false
   });
 
+  const user = auth.currentUser;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Load existing profile if any
+    if (!user) return;
+
+    const fetchProfile = async () => {
+      const docRef = doc(db, "graduates", user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setFullName(data.fullName || "");
+        setSkills(data.skills || []);
+        setLocation(data.location || "");
+        setCvUrl(data.cvUrl || "");
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
+
   const toggleEditMode = (section: Section) => {
     setEditMode((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const saveSection = (section: Section) => {
-    // Save logic
+  const saveSection = async (section: Section) => {
+    if (!user) return;
+    setLoading(true);
+
+    try {
+      const docRef = doc(db, "graduates", user.uid);
+      const data = {
+        uid: user.uid,
+        fullName,
+        email: user.email,
+        skills,
+        location,
+        cvUrl,
+        isProfileComplete: true,
+      };
+      await setDoc(docRef, data, { merge: true });
+      alert("Profile saved successfully!");
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      alert("Failed to save profile. Try again.");
+    }
+    setLoading(false);
     setEditMode((prev) => ({ ...prev, [section]: false }));
   };
 
   const cancelEdit = (section: Section) => {
     // Cancel logic
     setEditMode((prev) => ({ ...prev, [section]: false }));
+  };
+
+  const handleSkillInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // split by commas and trim spaces
+    const skillsArray = value.split(",").map(s => s.trim()).filter(Boolean);
+    setSkills(skillsArray);
+  };
+
+  const handleCvUpload = async (file: File) => {
+    if (!user) return;
+    setLoading(true);
+    const storageRef = ref(storage, `cvs/${user.uid}/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      snapshot => {
+        // you can add progress indicator here if you want
+      },
+      error => {
+        console.error("Upload failed:", error);
+        setLoading(false);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        setCvUrl(downloadURL);
+        setLoading(false);
+      }
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    setLoading(true);
+
+    try {
+      const docRef = doc(db, "graduates", user.uid);
+      const data = {
+        uid: user.uid,
+        fullName,
+        email: user.email,
+        skills,
+        location,
+        cvUrl,
+        isProfileComplete: true,
+      };
+      await setDoc(docRef, data, { merge: true });
+      alert("Profile saved successfully!");
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      alert("Failed to save profile. Try again.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -98,14 +212,25 @@ const ProfilePage = () => {
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  setCvFileName(file.name);
+                  setCvFile(file);
+                  setCvUrl(URL.createObjectURL(file));
                 }
               }}
             />
             Upload a file
           </label>
-          {cvFileName && (
-            <p className="text-green-600 text-sm mt-2">Selected: {cvFileName}</p>
+          {cvUrl && (
+            <p className="text-green-600 text-sm mt-2">
+              Selected:{" "}
+              <a
+                href={cvUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                {cvUrl.split("/").pop()}
+              </a>
+            </p>
           )}
         </section>
 
@@ -113,9 +238,53 @@ const ProfilePage = () => {
         <section className="bg-white p-6 rounded shadow mb-6">
           <h3 className="font-semibold mb-4">Personal Information</h3>
           {editMode.personal ? (
-            <div>Edit mode for personal info</div>
+            <div>
+              <label className="block mb-2">
+                Full Name
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={e => setFullName(e.target.value)}
+                  className="w-full border border-gray-300 rounded p-2"
+                  required
+                />
+              </label>
+
+              <label className="block mb-2">
+                Skills (comma separated)
+                <input
+                  type="text"
+                  value={skills.join(", ")}
+                  onChange={handleSkillInput}
+                  className="w-full border border-gray-300 rounded p-2"
+                  placeholder="React, JavaScript, Node.js"
+                  required
+                />
+              </label>
+
+              <label className="block mb-4">
+                Location (City or Region)
+                <input
+                  type="text"
+                  value={location}
+                  onChange={e => setLocation(e.target.value)}
+                  className="w-full border border-gray-300 rounded p-2"
+                  required
+                />
+              </label>
+            </div>
           ) : (
-            <div>View mode for personal info</div>
+            <div>
+              <p className="text-gray-700">
+                <strong>Name:</strong> {fullName}
+              </p>
+              <p className="text-gray-700">
+                <strong>Skills:</strong> {skills.join(", ")}
+              </p>
+              <p className="text-gray-700">
+                <strong>Location:</strong> {location}
+              </p>
+            </div>
           )}
 
           <div className="mt-4 space-x-2">
@@ -149,4 +318,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default GraduateProfile;
