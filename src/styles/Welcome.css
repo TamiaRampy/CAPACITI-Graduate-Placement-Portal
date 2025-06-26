@@ -3,7 +3,7 @@
 .welcome-container {
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #0b1e3d;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,14 +16,14 @@
 }
 
 .welcome-box {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(23, 41, 68, 0.95);
   max-width: 32rem;
   width: 100%;
   padding: 2rem 2.5rem;
   border-radius: 1rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
 }
 
@@ -45,7 +45,7 @@
   font-weight: 500;
   font-size: 1rem;
   margin-bottom: 2rem;
-  color: #e0e7ff;
+  color: #ff6f61;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
@@ -64,7 +64,7 @@
 }
 
 .welcome-card {
-  background: rgba(255, 255, 255, 0.15);
+  background: #475777;
   border-radius: 1rem;
   padding: 1.5rem 1.75rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -90,23 +90,23 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  color: #f0f4f8;
+  color: #ff6f61;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .welcome-card-title.employers {
-  color: #fbbf24; /* amber-400 */
+  color: #ff6f61;
 }
 
 .welcome-card-title.admins {
-  color: #34d399; /* emerald-400 */
+  color: #ff6f61;
 }
 
 .welcome-card-text {
   font-weight: 400;
   font-size: 0.875rem;
   line-height: 1.6;
-  color: #d1d5db;
+  color: #eceff3;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -124,16 +124,16 @@
 .welcome-select {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid #ff6f61;
   border-radius: 9999px;
   font-size: 1rem;
-  background: rgba(255, 255, 255, 0.15);
+  background: #13294b;
   color: #f0f4f8;
   cursor: pointer;
   transition: all 0.3s ease;
   box-sizing: border-box;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg fill='%23f0f4f8' stroke='%23f0f4f8' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg fill='%23FF6F61' stroke='%23FF6F61' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 20px;
@@ -146,19 +146,19 @@
 
 .welcome-select:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.2);
+  border-color: #ff6f61;
+  box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.1);
+  background: #13294b;
 }
 
 .welcome-select:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.2);
+  border-color: #ff6f61;
+  background: #1a2f4d;
   transform: translateY(-1px);
 }
 
 .welcome-select option {
-  background: #667eea;
+  background: #0b1e3d;
   color: #f0f4f8;
   padding: 12px;
   font-weight: 500;
@@ -169,14 +169,14 @@
 }
 
 .welcome-button {
-  background: #5a67d8; /* indigo-500 */
-  color: white;
+  background: #ff6f61;
+  color: #fff;
   font-weight: 700;
   font-size: 1.125rem;
   padding: 0.75rem 3rem;
   border-radius: 9999px;
   border: none;
-  box-shadow: 0 10px 20px rgba(90, 103, 216, 0.6);
+  box-shadow: 0 10px 20px rgba(255, 111, 97, 0.2);
   cursor: pointer;
   width: 100%;
   transition:
@@ -187,12 +187,12 @@
 }
 
 .welcome-button:hover:not(:disabled) {
-  background: #434190; /* indigo-700 */
-  box-shadow: 0 15px 30px rgba(67, 65, 144, 0.8);
+  background: #e65a4f;
+  box-shadow: 0 15px 30px rgba(255, 111, 97, 0.3);
 }
 
 .welcome-button:disabled {
-  background: rgba(255, 255, 255, 0.2);
+  background: #ff6f61aa;
   cursor: not-allowed;
   opacity: 0.6;
   box-shadow: none;
@@ -207,7 +207,7 @@
   margin-top: 2rem;
   font-weight: 400;
   font-size: 0.75rem;
-  color: #a0aec0;
+  color: #f0f4f8;
   user-select: none;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
