@@ -84,28 +84,36 @@ const GraduateProfile = () => {
     setSkills(skillsArray);
   };
 
-  const handleCvUpload = async (file: File) => {
-    if (!user) return;
-    setLoading(true);
+const handleCvUpload = async (file: File) => {
+  if (!user) return;
+  setLoading(true);
 
-    const filePath = `cvs/${user.uid}/${file.name}`;
-    const storageRef = ref(storage, filePath);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+  const filePath = `cvs/${user.uid}/${file.name}`;
+  const storageRef = ref(storage, filePath);
+  const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on("state_changed",
-      null,
-      error => {
-        console.error("CV Upload failed:", error);
-        alert("CV upload failed. Try again.");
-        setLoading(false);
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        setCvUrl(downloadURL);
-        setLoading(false);
-      }
-    );
-  };
+  uploadTask.on(
+    "state_changed",
+    null,
+    (error) => {
+      console.error("CV Upload failed:", error);
+      alert("CV upload failed. Try again.");
+      setLoading(false);
+    },
+    async () => {
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+      setCvUrl(downloadURL);
+
+      // ✅ Save CV URL to Firestore after upload
+      const docRef = doc(db, "graduates", user.uid);
+      await setDoc(docRef, { cvUrl: downloadURL }, { merge: true });
+
+      setLoading(false);
+      alert("CV uploaded and saved successfully!");
+    }
+  );
+};
+
 
   const saveSection = async (section: Section) => {
     if (!user) return;
