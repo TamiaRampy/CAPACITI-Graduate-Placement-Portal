@@ -39,39 +39,92 @@ const ProfilePage = () => {
   };
 
   const saveSection = (section: Section) => {
-    // Save logic
     setEditMode((prev) => ({ ...prev, [section]: false }));
   };
 
   const cancelEdit = (section: Section) => {
-    // Cancel logic
     setEditMode((prev) => ({ ...prev, [section]: false }));
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
-      <header className="flex items-center justify-between bg-white p-4 shadow rounded">
-        <button onClick={() => navigate('/graduate/dashboard')}>
+    <div className="profile-page">
+      <header
+        className="profile-header"
+        style={{
+          position: 'relative',
+          paddingTop: 48,         // Increased from 24
+          paddingBottom: 32,      // Increased from 16
+          minHeight: 130          // Increased from 90
+        }}
+      >
+        <button
+          onClick={() => navigate('/graduate/dashboard')}
+          className="back-btn"
+          style={{
+            position: 'absolute',
+            left: 20,
+            top: 60,
+            background: 'none',
+            border: 'none',
+            color: '#1d4368',
+            fontSize: 22,
+            cursor: 'pointer',
+            zIndex: 2
+          }}
+        >
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <div className="flex flex-col items-start">
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <FontAwesomeIcon icon={faUserCircle} /> My Profile
-          </h1>
-          <p className="text-sm text-gray-500">Manage your account settings</p>
+        {/* BUTTONS ON TOP RIGHT */}
+        <div
+          className="header-actions"
+          style={{
+            position: 'absolute',
+            right: 32,
+            top: 60,
+            display: 'flex',
+            gap: '12px',
+            zIndex: 2
+          }}
+        >
+          <button className="action-btn" style={{ background: '#4c0f92', color: '#fff', borderRadius: 20, padding: '8px 16px', border: 'none', fontSize: 18, cursor: 'pointer' }}>
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+          <button className="action-btn" style={{ background: '#4c0f92', color: '#fff', borderRadius: 20, padding: '8px 16px', border: 'none', fontSize: 18, cursor: 'pointer' }}>
+            <FontAwesomeIcon icon={faCog} />
+          </button>
         </div>
-        <div className="space-x-2">
-          <button><FontAwesomeIcon icon={faEdit} /></button>
-          <button><FontAwesomeIcon icon={faCog} /></button>
+        {/* CENTERED HEADER */}
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+          <h1
+            className="profile-title"
+            style={{
+              fontSize: '2.5rem',
+              fontWeight: 700,
+              color: '#001f4d',
+              textShadow: '0 2px 6px rgba(0,0,0,0.15)',
+              margin: 0,
+              textAlign: 'center',
+              background: 'rgba(255,255,255,0.85)',
+              padding: '0 24px',
+              borderRadius: 12,
+              zIndex: 1
+            }}
+          >
+            <FontAwesomeIcon icon={faUserCircle} style={{ marginRight: 12 }} />
+            My Profile
+          </h1>
+          <p className="profile-subtitle" style={{ color: '#ff6f61', marginTop: 8, marginBottom: 0, textAlign: 'center' }}>
+            Manage your account settings
+          </p>
         </div>
       </header>
 
-      <main className="mt-6">
+      <main className="main-content" style={{ marginTop: 0 }}>
         {/* Avatar Section */}
-        <section className="bg-white p-6 rounded shadow mb-6">
-          <div className="flex items-center space-x-4">
-            <label htmlFor="profile-pic-upload" className="cursor-pointer">
-              <div className="relative w-24 h-24">
+        <section className="profile-overview">
+          <div className="profile-picture-section">
+            <label htmlFor="profile-pic-upload" className="profile-picture-wrapper">
+              <div className="profile-picture">
                 <Avatar>
                   <AvatarImage
                     src="https://ui-avatars.com/api/?name=User&background=ff6b35&color=ffffff&size=200"
@@ -79,7 +132,7 @@ const ProfilePage = () => {
                   />
                   <AvatarFallback>U</AvatarFallback>
                 </Avatar>
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full">
+                <div className="upload-overlay">
                   {/* Optional overlay (e.g., camera icon) */}
                 </div>
               </div>
@@ -88,13 +141,13 @@ const ProfilePage = () => {
         </section>
 
         {/* Upload CV Section */}
-        <section className="bg-white p-6 rounded shadow mb-6">
-          <h3 className="font-semibold mb-4">Upload CV</h3>
-          <label className="inline-block cursor-pointer text-blue-600 font-medium">
+        <section className="profile-details" style={{ marginTop: 0 }}>
+          <h3 className="section-title" style={{ color: '#1d4368' }}>Upload CV</h3>
+          <label className="upload-label" style={{ color: '#ff8a65' }}>
             <input
               type="file"
               accept=".pdf,.doc,.docx"
-              className="hidden"
+              className="upload-input"
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
@@ -105,31 +158,35 @@ const ProfilePage = () => {
             Upload a file
           </label>
           {cvFileName && (
-            <p className="text-green-600 text-sm mt-2">Selected: {cvFileName}</p>
+            <p className="upload-selected-file" style={{ color: '#ff8a65' }}>
+              Selected: {cvFileName}
+            </p>
           )}
         </section>
 
         {/* Personal Info Section */}
-        <section className="bg-white p-6 rounded shadow mb-6">
-          <h3 className="font-semibold mb-4">Personal Information</h3>
+        <section className="profile-details">
+          <h3 className="section-title" style={{ color: '#1d4368' }}>Personal Information</h3>
           {editMode.personal ? (
-            <div>Edit mode for personal info</div>
+            <div className="edit-mode active" style={{ color: '#ff8a65' }}>Edit mode for personal info</div>
           ) : (
-            <div>View mode for personal info</div>
+            <div className="view-mode" style={{ color: '#ff8a65' }}>View mode for personal info</div>
           )}
 
-          <div className="mt-4 space-x-2">
+          <div className="edit-actions">
             {editMode.personal ? (
               <>
                 <button
                   onClick={() => saveSection('personal')}
-                  className="px-4 py-2 bg-green-600 text-white rounded"
+                  className="save-btn"
+                  style={{ color: '#ff8a65' }}
                 >
                   Save
                 </button>
                 <button
                   onClick={() => cancelEdit('personal')}
-                  className="px-4 py-2 bg-gray-300 text-black rounded"
+                  className="cancel-btn"
+                  style={{ color: '#ff8a65' }}
                 >
                   Cancel
                 </button>
@@ -137,7 +194,8 @@ const ProfilePage = () => {
             ) : (
               <button
                 onClick={() => toggleEditMode('personal')}
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="edit-btn"
+                style={{ color: '#ff8a65' }}
               >
                 Edit
               </button>
