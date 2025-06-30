@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { app } from "../../firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+const auth = getAuth(app);
 import { Link } from "react-router-dom";
 import "../../styles/AdminAuth.css";
 
