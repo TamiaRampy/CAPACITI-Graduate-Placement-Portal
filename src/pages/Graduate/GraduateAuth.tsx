@@ -71,7 +71,7 @@ const GraduateAuth: React.FC<Props> = ({ mode }) => {
         setConfirmPassword("");
         setTimeout(() => {
           setSuccess("");
-          navigate("/login/graduate");
+          navigate("/login/graduate/profile");
         }, 3000);
       }
     } catch (err: any) {

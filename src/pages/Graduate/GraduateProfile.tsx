@@ -1,17 +1,13 @@
 // src/pages/GraduateProfile.tsx
 import React, { useEffect, useState } from "react";
-import { auth, db, storage } from "../../firebase";
+import { auth, db } from "../../firebase";
 import {
   doc,
   getDoc,
   setDoc
 } from "firebase/firestore";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL
-} from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../supabaseClient"; // Make sure this path is correct for your project
 import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -48,6 +44,7 @@ const GraduateProfile = () => {
     languages: false,
     security: false
   });
+  const [profileSaved, setProfileSaved] = useState(false); // <-- Add this line
 
   const user = auth.currentUser;
   const navigate = useNavigate();
@@ -58,13 +55,16 @@ const GraduateProfile = () => {
     const fetchProfile = async () => {
       const docRef = doc(db, "graduates", user.uid);
       const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setFullName(data.fullName || "");
-        setSkills(data.skills || []);
-        setLocation(data.location || "");
-        setCvUrl(data.cvUrl || "");
+      if (!docSnap.exists()) {
+        // Possibly a new user – start profile creation
+        console.log("New user - no profile found");
+        return;
       }
+      const data = docSnap.data();
+      setFullName(data.fullName || "");
+      setSkills(data.skills || []);
+      setLocation(data.location || "");
+      setCvUrl(data.cvUrl || "");
     };
 
     fetchProfile();
@@ -84,35 +84,55 @@ const GraduateProfile = () => {
     setSkills(skillsArray);
   };
 
+  // 📄 Handle CV upload
+
 const handleCvUpload = async (file: File) => {
   if (!user) return;
   setLoading(true);
 
-  const filePath = `cvs/${user.uid}/${file.name}`;
-  const storageRef = ref(storage, filePath);
-  const uploadTask = uploadBytesResumable(storageRef, file);
+  try {
+    // 🔐 Get Firebase token
+    const token = await user.getIdToken();
+   await supabase.auth.setSession({
+  access_token: token,
+  refresh_token: token // using the same token for both
+});
 
-  uploadTask.on(
-    "state_changed",
-    null,
-    (error) => {
-      console.error("CV Upload failed:", error);
-      alert("CV upload failed. Try again.");
-      setLoading(false);
-    },
-    async () => {
-      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-      setCvUrl(downloadURL);
 
-      // ✅ Save CV URL to Firestore after upload
-      const docRef = doc(db, "graduates", user.uid);
-      await setDoc(docRef, { cvUrl: downloadURL }, { merge: true });
+    // 📁 Define upload path and upload file
+    const filePath = `${user.uid}/${Date.now()}-${file.name}`;
+    const { data, error } = await supabase.storage
+      .from("cv-uploads")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false
+      });
 
-      setLoading(false);
-      alert("CV uploaded and saved successfully!");
-    }
-  );
+    if (error) throw error;
+
+    // 🌐 Get public URL
+    const { data: publicData } = supabase.storage
+      .from("cv-uploads")
+      .getPublicUrl(filePath);
+
+    const publicUrl = publicData?.publicUrl;
+    if (!publicUrl) throw new Error("Failed to get public URL");
+
+    setCvUrl(publicUrl);
+
+    // 💾 Save URL to Firestore
+    const docRef = doc(db, "graduates", user.uid);
+    await setDoc(docRef, { cvUrl: publicUrl }, { merge: true });
+
+    setLoading(false);
+    alert("CV uploaded and saved successfully!");
+  } catch (error) {
+    console.error("CV Upload failed:", error);
+    alert("CV upload failed. Try again.");
+    setLoading(false);
+  }
 };
+
 
 
   const saveSection = async (section: Section) => {
@@ -128,17 +148,18 @@ const handleCvUpload = async (file: File) => {
         location,
         skills,
         cvUrl,
-        isProfileComplete: true
+        isProfileComplete: true,
       };
       await setDoc(docRef, data, { merge: true });
-      alert("Profile saved successfully!");
+
+      setProfileSaved(true);  // <-- Show success message here
+      setEditMode((prev) => ({ ...prev, [section]: false }));
     } catch (error) {
       console.error("Error saving profile:", error);
       alert("Error saving profile.");
     }
 
     setLoading(false);
-    setEditMode((prev) => ({ ...prev, [section]: false }));
   };
 
   return (
@@ -190,7 +211,8 @@ const handleCvUpload = async (file: File) => {
           </label>
           {cvUrl && (
             <p className="text-green-600 text-sm mt-2">
-              Uploaded: <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="underline">
+              Uploaded:{" "}
+              <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="underline">
                 {cvUrl.split("/").pop()}
               </a>
             </p>
@@ -252,6 +274,21 @@ const handleCvUpload = async (file: File) => {
             )}
           </div>
         </section>
+
+        {/* Success message and proceed button */}
+        {profileSaved && (
+          <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            <p>Profile created successfully!</p>
+            <button
+              onClick={() => navigate("/graduate/dashboard")}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Proceed to Dashboard
+            </button>
+          </div>
+        )}
+
+        {/* ...rest of your sections... */}
       </main>
     </div>
   );
