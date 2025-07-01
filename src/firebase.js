@@ -1,28 +1,29 @@
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD9CnLNi-u84JL7B250gIOAYE2E1hUU9TA",
-  authDomain: "portal-a878c.firebaseapp.com",
-  projectId: "portal-a878c",
-  storageBucket: "portal-a878c.appspot.com",
-  messagingSenderId: "436044585193",
-  appId: "1:436044585193:web:cc2050be51bbb6b200b878",
-  measurementId: "G-4C5501WT1M"
+  apiKey: "AIzaSyAff33MBefu5TzBdARUuM4-ytbF7kgy8j4",
+  authDomain: "capaciti-placement-portal.firebaseapp.com",
+  projectId: "capaciti-placement-portal",
+  storageBucket: "capaciti-placement-portal.firebasestorage.app",
+  messagingSenderId: "306181793625",
+  appId: "1:306181793625:web:ebeeb205623798dbae4e48",
+  measurementId: "G-CC5P2YS5NY"
 };
 
 let app;
-let analytics;
+// let analytics;
 let auth;
 let db;
 
 if (typeof window !== 'undefined') {
   app = initializeApp(firebaseConfig);
-  analytics = getAnalytics(app);
+  // analytics = getAnalytics(app);
   auth = getAuth(app);
   db = getFirestore(app);
 }
 
-export { analytics, auth, db };
+// export { analytics, auth, db };
+export {auth, db}
