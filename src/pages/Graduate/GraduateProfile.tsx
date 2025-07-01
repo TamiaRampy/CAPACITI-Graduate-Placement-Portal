@@ -1,13 +1,9 @@
 // src/pages/GraduateProfile.tsx
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../../firebase";
-import {
-  doc,
-  getDoc,
-  setDoc
-} from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient"; // Make sure this path is correct for your project
+import { supabase } from "../../supabaseClient";
 import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -33,6 +29,7 @@ const GraduateProfile = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [location, setLocation] = useState("");
   const [cvUrl, setCvUrl] = useState("");
+  const [cvFileName, setCvFileName] = useState(""); // for display
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState<Record<Section, boolean>>({
     personal: false,
@@ -44,7 +41,7 @@ const GraduateProfile = () => {
     languages: false,
     security: false
   });
-  const [profileSaved, setProfileSaved] = useState(false); // <-- Add this line
+  const [profileSaved, setProfileSaved] = useState(false);
 
   const user = auth.currentUser;
   const navigate = useNavigate();
@@ -55,16 +52,13 @@ const GraduateProfile = () => {
     const fetchProfile = async () => {
       const docRef = doc(db, "graduates", user.uid);
       const docSnap = await getDoc(docRef);
-      if (!docSnap.exists()) {
-        // Possibly a new user – start profile creation
-        console.log("New user - no profile found");
-        return;
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setFullName(data.fullName || "");
+        setSkills(data.skills || []);
+        setLocation(data.location || "");
+        setCvUrl(data.cvUrl || "");
       }
-      const data = docSnap.data();
-      setFullName(data.fullName || "");
-      setSkills(data.skills || []);
-      setLocation(data.location || "");
-      setCvUrl(data.cvUrl || "");
     };
 
     fetchProfile();
@@ -80,60 +74,51 @@ const GraduateProfile = () => {
 
   const handleSkillInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const skillsArray = value.split(",").map(s => s.trim()).filter(Boolean);
+    const skillsArray = value.split(",").map((s) => s.trim()).filter(Boolean);
     setSkills(skillsArray);
   };
 
-  // 📄 Handle CV upload
+  const handleCvUpload = async (file: File) => {
+    if (!user) return;
+    setLoading(true);
 
-const handleCvUpload = async (file: File) => {
-  if (!user) return;
-  setLoading(true);
-
-  try {
-    // 🔐 Get Firebase token
-    const token = await user.getIdToken();
-   await supabase.auth.setSession({
-  access_token: token,
-  refresh_token: token // using the same token for both
-});
-
-
-    // 📁 Define upload path and upload file
-    const filePath = `${user.uid}/${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage
-      .from("cv-uploads")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false
+    try {
+      const token = await user.getIdToken();
+      await supabase.auth.setSession({
+        access_token: token,
+        refresh_token: token
       });
 
-    if (error) throw error;
+      const filePath = `${user.uid}/${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("cv-uploads")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false
+        });
 
-    // 🌐 Get public URL
-    const { data: publicData } = supabase.storage
-      .from("cv-uploads")
-      .getPublicUrl(filePath);
+      if (error) throw error;
 
-    const publicUrl = publicData?.publicUrl;
-    if (!publicUrl) throw new Error("Failed to get public URL");
+      const { data: publicData } = supabase.storage
+        .from("cv-uploads")
+        .getPublicUrl(filePath);
 
-    setCvUrl(publicUrl);
+      const publicUrl = publicData?.publicUrl;
+      if (!publicUrl) throw new Error("Failed to get public URL");
 
-    // 💾 Save URL to Firestore
-    const docRef = doc(db, "graduates", user.uid);
-    await setDoc(docRef, { cvUrl: publicUrl }, { merge: true });
+      setCvUrl(publicUrl);
+      setCvFileName(file.name);
 
-    setLoading(false);
-    alert("CV uploaded and saved successfully!");
-  } catch (error) {
-    console.error("CV Upload failed:", error);
-    alert("CV upload failed. Try again.");
-    setLoading(false);
-  }
-};
+      await setDoc(doc(db, "graduates", user.uid), { cvUrl: publicUrl }, { merge: true });
 
-
+      setLoading(false);
+      alert("CV uploaded and saved successfully!");
+    } catch (error) {
+      console.error("CV Upload failed:", error);
+      alert("CV upload failed. Try again.");
+      setLoading(false);
+    }
+  };
 
   const saveSection = async (section: Section) => {
     if (!user) return;
@@ -148,11 +133,11 @@ const handleCvUpload = async (file: File) => {
         location,
         skills,
         cvUrl,
-        isProfileComplete: true,
+        isProfileComplete: true
       };
       await setDoc(docRef, data, { merge: true });
 
-      setProfileSaved(true);  // <-- Show success message here
+      setProfileSaved(true);
       setEditMode((prev) => ({ ...prev, [section]: false }));
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -168,11 +153,11 @@ const handleCvUpload = async (file: File) => {
         <button onClick={() => navigate("/graduate/dashboard")}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <div>
+        <div className="flex flex-col items-start">
           <h1 className="text-xl font-bold flex items-center gap-2">
             <FontAwesomeIcon icon={faUserCircle} /> My Profile
           </h1>
-          <p className="text-sm text-gray-500">Manage your account info</p>
+          <p className="text-sm text-gray-500">Manage your account settings</p>
         </div>
         <div className="space-x-2">
           <button><FontAwesomeIcon icon={faEdit} /></button>
@@ -194,7 +179,7 @@ const handleCvUpload = async (file: File) => {
           </div>
         </section>
 
-        {/* CV Upload */}
+        {/* Upload CV */}
         <section className="bg-white p-6 rounded shadow mb-6">
           <h3 className="font-semibold mb-4">Upload CV</h3>
           <label className="text-blue-600 cursor-pointer font-medium">
@@ -209,12 +194,9 @@ const handleCvUpload = async (file: File) => {
             />
             Upload a file
           </label>
-          {cvUrl && (
+          {cvFileName && (
             <p className="text-green-600 text-sm mt-2">
-              Uploaded:{" "}
-              <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="underline">
-                {cvUrl.split("/").pop()}
-              </a>
+              Uploaded: <span className="underline">{cvFileName}</span>
             </p>
           )}
         </section>
@@ -275,7 +257,6 @@ const handleCvUpload = async (file: File) => {
           </div>
         </section>
 
-        {/* Success message and proceed button */}
         {profileSaved && (
           <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
             <p>Profile created successfully!</p>
@@ -287,8 +268,6 @@ const handleCvUpload = async (file: File) => {
             </button>
           </div>
         )}
-
-        {/* ...rest of your sections... */}
       </main>
     </div>
   );
