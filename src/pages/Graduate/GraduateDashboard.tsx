@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/GraduateDashboard.css";
 
@@ -6,18 +6,32 @@ const GraduateDashboard = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handlePictureClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+  // Load image from localStorage on mount
+  useEffect(() => {
+    const savedImage = localStorage.getItem("graduateProfileImage");
+    if (savedImage) setProfileImage(savedImage);
+  }, []);
+
+  // Save image to localStorage when changed
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        setProfileImage(imageUrl);
+        localStorage.setItem("graduateProfileImage", imageUrl);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-    }
+  const handleUploadClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  const handleChangeClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
   };
 
   return (
@@ -32,24 +46,36 @@ const GraduateDashboard = () => {
         {/* Sidebar */}
         <aside className="sidebar">
           <div className="profile-picture-section">
-            <div className="profile-picture-wrapper" style={{ cursor: "pointer", position: "relative" }}>
+            <label
+              htmlFor="profile-pic-upload"
+              className="profile-picture-wrapper"
+              style={{ cursor: "pointer" }}
+            >
               <div className="profile-picture">
-                {profileImage ? (
-                  <img src={profileImage} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                ) : (
-                  // Placeholder content if no image uploaded
-                  null
-                )}
+                <img
+                  id="profile-img"
+                  src={
+                    profileImage ||
+                    "https://ui-avatars.com/api/?name=User&background=ff6b35&color=ffffff&size=200"
+                  }
+                  alt="Profile Picture"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://ui-avatars.com/api/?name=User&background=ff6b35&color=ffffff&size=200";
+                  }}
+                />
+                <div className="upload-overlay">
+                  <i
+                    className="fas fa-camera"
+                    style={{ fontSize: 24, marginBottom: 8 }}
+                  ></i>
+                  <span>Change Photo</span>
+                </div>
               </div>
-              <button className="upload-button" type="button" onClick={handlePictureClick} aria-label="Upload Image">
-                <span className="plus-icon">+</span> Upload
-              </button>
-              <div className="upload-overlay">
-                <span>Upload Image</span>
-              </div>
-            </div>
+            </label>
             <input
               type="file"
+              id="profile-pic-upload"
               accept="image/*"
               ref={fileInputRef}
               style={{ display: "none" }}
@@ -59,15 +85,21 @@ const GraduateDashboard = () => {
           <nav>
             <Link to="/graduate/profile" className="nav-link">
               <h4 className="nav-title">Edit Profile</h4>
-              <p className="nav-description">Update your CV, skills and portfolio.</p>
+              <p className="nav-description">
+                Update your CV, skills and portfolio.
+              </p>
             </Link>
             <Link to="/graduate/jobs" className="nav-link">
               <h4 className="nav-title">View Job Matches</h4>
-              <p className="nav-description">Explore jobs tailored to your skills.</p>
+              <p className="nav-description">
+                Explore jobs tailored to your skills.
+              </p>
             </Link>
             <Link to="/graduate/applications" className="nav-link">
               <h4 className="nav-title">Track Applications</h4>
-              <p className="nav-description">Check status of your job applications.</p>
+              <p className="nav-description">
+                Check status of your job applications.
+              </p>
             </Link>
           </nav>
         </aside>
@@ -77,7 +109,9 @@ const GraduateDashboard = () => {
           {/* Overview */}
           <section>
             <h2 className="section-title">Overview</h2>
-            <p className="section-description">Track your progress and navigate your placement journey.</p>
+            <p className="section-description">
+              Track your progress and navigate your placement journey.
+            </p>
           </section>
 
           {/* Stats Cards */}
@@ -107,7 +141,8 @@ const GraduateDashboard = () => {
 
       {/* Footer */}
       <footer className="footer">
-        © {new Date().getFullYear()} CAPACITI Graduate Placement Portal. All rights reserved.
+        © {new Date().getFullYear()} CAPACITI Graduate Placement Portal. All
+        rights reserved.
       </footer>
     </div>
   );

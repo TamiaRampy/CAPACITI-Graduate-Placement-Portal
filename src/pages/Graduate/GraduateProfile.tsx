@@ -119,89 +119,68 @@ const ProfilePage = () => {
         </div>
       </header>
 
-      <main className="main-content" style={{ marginTop: 0 }}>
-        {/* Avatar Section */}
-        <section className="profile-overview">
-          <div className="profile-picture-section">
-            <label htmlFor="profile-pic-upload" className="profile-picture-wrapper">
-              <div className="profile-picture">
-                <Avatar>
-                  <AvatarImage
-                    src="https://ui-avatars.com/api/?name=User&background=ff6b35&color=ffffff&size=200"
-                    alt="User"
-                  />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-                <div className="upload-overlay">
-                  {/* Optional overlay (e.g., camera icon) */}
-                </div>
-              </div>
+      <main className="main-content">
+        <div className="profile-details-row">
+          {/* Upload CV Section */}
+          <section className="profile-details">
+            <h3 className="section-title" style={{ color: '#1d4368' }}>Upload CV</h3>
+            <label className="upload-label" style={{ color: '#ff8a65' }}>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="upload-input"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setCvFileName(file.name);
+                  }
+                }}
+              />
+              Upload a file
             </label>
-          </div>
-        </section>
-
-        {/* Upload CV Section */}
-        <section className="profile-details" style={{ marginTop: 0 }}>
-          <h3 className="section-title" style={{ color: '#1d4368' }}>Upload CV</h3>
-          <label className="upload-label" style={{ color: '#ff8a65' }}>
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              className="upload-input"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setCvFileName(file.name);
-                }
-              }}
-            />
-            Upload a file
-          </label>
-          {cvFileName && (
-            <p className="upload-selected-file" style={{ color: '#ff8a65' }}>
-              Selected: {cvFileName}
-            </p>
-          )}
-        </section>
-
-        {/* Personal Info Section */}
-        <section className="profile-details">
-          <h3 className="section-title" style={{ color: '#1d4368' }}>Personal Information</h3>
-          {editMode.personal ? (
-            <div className="edit-mode active" style={{ color: '#ff8a65' }}>Edit mode for personal info</div>
-          ) : (
-            <div className="view-mode" style={{ color: '#ff8a65' }}>View mode for personal info</div>
-          )}
-
-          <div className="edit-actions">
-            {editMode.personal ? (
-              <>
-                <button
-                  onClick={() => saveSection('personal')}
-                  className="save-btn"
-                  style={{ color: '#ff8a65' }}
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => cancelEdit('personal')}
-                  className="cancel-btn"
-                  style={{ color: '#ff8a65' }}
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => toggleEditMode('personal')}
-                className="edit-btn"
-                style={{ color: '#ff8a65' }}
-              >
-                Edit
-              </button>
+            {cvFileName && (
+              <p className="upload-selected-file" style={{ color: '#ff8a65' }}>
+                Selected: {cvFileName}
+              </p>
             )}
-          </div>
-        </section>
+          </section>
+
+          {/* Personal Info Section */}
+          <section className="profile-details">
+            <h3 className="section-title" style={{ color: '#1d4368' }}>Personal Information</h3>
+            {editMode.personal ? (
+              <div className="edit-mode active" style={{ color: '#ff8a65' }}>Edit mode for personal info</div>
+            ) : (
+              <div className="view-mode" style={{ color: '#ff8a65' }}>View mode for personal info</div>
+            )}
+
+            <div className="edit-actions">
+              {editMode.personal ? (
+                <>
+                  <button
+                    onClick={() => saveSection('personal')}
+                    className="save-btn"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => cancelEdit('personal')}
+                    className="cancel-btn"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => toggleEditMode('personal')}
+                  className="edit-btn"
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   );
