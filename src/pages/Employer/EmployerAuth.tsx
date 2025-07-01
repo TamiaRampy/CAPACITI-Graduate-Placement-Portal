@@ -4,6 +4,7 @@ import { auth } from "../../firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendEmailVerification,
 } from "firebase/auth";
 import "../../styles/EmployerAuth.css";
 
@@ -39,11 +40,16 @@ const EmployerAuth: React.FC<Props> = ({ mode }) => {
     }
     try {
       if (mode === "login") {
-        await signInWithEmailAndPassword(auth, email, password);
-        // navigate('/employer/dashboard');
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (!userCredential.user.emailVerified) {
+          setError("Please verify your email before logging in. Check your inbox.");
+          return;
+        }
+        navigate('/employer/dashboard'); // Only redirect if verified
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
-        setSuccess("You have signed up successfully! Redirecting to login...");
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(userCredential.user);
+        setSuccess("Sign up successful! Please check your email to verify your account before logging in.");
         setName("");
         setSurname("");
         setEmail("");
@@ -52,7 +58,7 @@ const EmployerAuth: React.FC<Props> = ({ mode }) => {
         setTimeout(() => {
           setSuccess("");
           navigate("/login/employer");
-        }, 2000);
+        }, 4000);
       }
     } catch (err: any) {
       setError(err.message);
