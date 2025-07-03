@@ -6,12 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faUserCircle,
-  faEdit,
-  faCog
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faUserCircle, faEdit, faCog } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/Profile.css";
 
 type Section =
@@ -29,7 +24,7 @@ const GraduateProfile = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [location, setLocation] = useState("");
   const [cvUrl, setCvUrl] = useState("");
-  const [cvFileName, setCvFileName] = useState(""); // for display
+  const [cvFileName, setCvFileName] = useState("");
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState<Record<Section, boolean>>({
     personal: false,
@@ -41,6 +36,7 @@ const GraduateProfile = () => {
     languages: false,
     security: false
   });
+  const [profilePicUrl, setProfilePicUrl] = useState("");
   const [profileSaved, setProfileSaved] = useState(false);
 
   const user = auth.currentUser;
@@ -48,7 +44,6 @@ const GraduateProfile = () => {
 
   useEffect(() => {
     if (!user) return;
-
     const fetchProfile = async () => {
       const docRef = doc(db, "graduates", user.uid);
       const docSnap = await getDoc(docRef);
@@ -58,9 +53,9 @@ const GraduateProfile = () => {
         setSkills(data.skills || []);
         setLocation(data.location || "");
         setCvUrl(data.cvUrl || "");
+        setProfilePicUrl(data.profilePicUrl || "");
       }
     };
-
     fetchProfile();
   }, [user]);
 
@@ -78,10 +73,9 @@ const GraduateProfile = () => {
     setSkills(skillsArray);
   };
 
-  const handleCvUpload = async (file: File) => {
+  const handleUpload = async (file: File, bucket: string, field: "cvUrl" | "profilePicUrl") => {
     if (!user) return;
     setLoading(true);
-
     try {
       const token = await user.getIdToken();
       await supabase.auth.setSession({
@@ -89,33 +83,78 @@ const GraduateProfile = () => {
         refresh_token: token
       });
 
-      const filePath = `${user.uid}/${Date.now()}-${file.name}`;
-      const { data, error } = await supabase.storage
-        .from("cv-uploads")
+      const filePath = `${user.uid}/${field}-${Date.now()}-${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
         .upload(filePath, file, {
           cacheControl: "3600",
-          upsert: false
+          upsert: field === "profilePicUrl"
         });
 
-      if (error) throw error;
+      if (uploadError) throw uploadError;
 
       const { data: publicData } = supabase.storage
-        .from("cv-uploads")
+        .from(bucket)
         .getPublicUrl(filePath);
 
       const publicUrl = publicData?.publicUrl;
       if (!publicUrl) throw new Error("Failed to get public URL");
 
-      setCvUrl(publicUrl);
-      setCvFileName(file.name);
+      field === "cvUrl" ? setCvUrl(publicUrl) : setProfilePicUrl(publicUrl);
+      if (field === "cvUrl") setCvFileName(file.name);
 
-      await setDoc(doc(db, "graduates", user.uid), { cvUrl: publicUrl }, { merge: true });
+      await setDoc(doc(db, "graduates", user.uid), { [field]: publicUrl }, { merge: true });
 
+      alert(`${field === "cvUrl" ? "CV" : "Profile picture"} uploaded successfully!`);
+    } catch (error: any) {
+      console.error("Upload failed:", error);
+      alert("Upload failed. Please try again.");
+    } finally {
       setLoading(false);
-      alert("CV uploaded and saved successfully!");
-    } catch (error) {
-      console.error("CV Upload failed:", error);
-      alert("CV upload failed. Try again.");
+    }
+  };
+
+  const handleProfilePicUpload = async (file: File) => {
+    if (!user) return;
+    setLoading(true);
+
+    try {
+      const token = await user.getIdToken();
+      await supabase.auth.setSession({
+        access_token: token,
+        refresh_token: token,
+      });
+
+      const filePath = `${user.uid}/profile-${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("profile-pictures")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (error) throw error;
+
+      const { data: publicData } = supabase.storage
+        .from("profile-pictures")
+        .getPublicUrl(filePath);
+
+      const publicUrl = publicData?.publicUrl;
+      if (!publicUrl) throw new Error("Failed to get profile picture URL");
+
+      setProfilePicUrl(publicUrl);
+
+      await setDoc(
+        doc(db, "graduates", user.uid),
+        { profilePicUrl: publicUrl },
+        { merge: true }
+      );
+
+      alert("Profile picture uploaded!");
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Failed to upload profile picture.");
+    } finally {
       setLoading(false);
     }
   };
@@ -123,7 +162,6 @@ const GraduateProfile = () => {
   const saveSection = async (section: Section) => {
     if (!user) return;
     setLoading(true);
-
     try {
       const docRef = doc(db, "graduates", user.uid);
       const data = {
@@ -133,18 +171,18 @@ const GraduateProfile = () => {
         location,
         skills,
         cvUrl,
+        profilePicUrl,
         isProfileComplete: true
       };
       await setDoc(docRef, data, { merge: true });
-
       setProfileSaved(true);
       setEditMode((prev) => ({ ...prev, [section]: false }));
     } catch (error) {
       console.error("Error saving profile:", error);
       alert("Error saving profile.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -169,13 +207,25 @@ const GraduateProfile = () => {
         {/* Avatar */}
         <section className="bg-white p-6 rounded shadow mb-6">
           <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarImage
-                src="https://ui-avatars.com/api/?name=User&background=ff6b35&color=ffffff&size=200"
-                alt="Avatar"
+            <label htmlFor="profile-pic-input" className="cursor-pointer relative w-24 h-24 rounded-full overflow-hidden">
+              <Avatar>
+                <AvatarImage
+                  src={profilePicUrl || "https://ui-avatars.com/api/?name=User"}
+                  alt="Profile"
+                />
+                <AvatarFallback>U</AvatarFallback>
+              </Avatar>
+              <input
+                id="profile-pic-input"
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleProfilePicUpload(file);
+                }}
               />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
+            </label>
           </div>
         </section>
 
@@ -189,14 +239,22 @@ const GraduateProfile = () => {
               hidden
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) handleCvUpload(file);
+                if (file) handleUpload(file, "cv-uploads", "cvUrl");
               }}
             />
             Upload a file
           </label>
-          {cvFileName && (
+          {cvUrl && (
             <p className="text-green-600 text-sm mt-2">
-              Uploaded: <span className="underline">{cvFileName}</span>
+              Uploaded:{" "}
+              <a
+                href={cvUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-blue-700"
+              >
+                View CV
+              </a>
             </p>
           )}
         </section>

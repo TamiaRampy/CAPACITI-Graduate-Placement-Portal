@@ -39,29 +39,25 @@ const EmployerAuth: React.FC<Props> = ({ mode }) => {
       }
     }
     try {
-if (mode === "login") {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  if (!userCredential.user.emailVerified) {
-    setError("Please verify your email before logging in. Check your inbox.");
-    return;
-  }
-  navigate('/employer/dashboard'); // Only redirect if verified
-} else {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  if (userCredential.user) {
-    await sendEmailVerification(userCredential.user);
-    setSuccess("Sign up successful! Please check your email to verify your account before logging in.");
-  }
-  setName("");
-  setSurname("");
-  setEmail("");
-  setPassword("");
-  setConfirmPassword("");
-  setTimeout(() => {
-    setSuccess("");
-    navigate("/login/employer");
-  }, 4000);
-}
+        if (mode === "login") {
+          await signInWithEmailAndPassword(auth, email, password);
+          navigate('/employer/dashboard');
+        } else {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          if (userCredential.user) {
+            await sendEmailVerification(userCredential.user);
+            setSuccess("Verification email sent! Please check your inbox. Redirecting to login...");
+          }
+          setName("");
+          setSurname("");
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+          setTimeout(() => {
+            setSuccess("");
+            navigate("/login/employer");
+          }, 2000);
+        }
     } catch (err: any) {
       setError(err.message);
     }
@@ -141,6 +137,7 @@ if (mode === "login") {
               className="auth-input"
             />
           </div>
+ 
           <div className="input-group" style={{ position: "relative" }}>
             <input
               type={showPassword ? "text" : "password"}
@@ -296,3 +293,4 @@ if (mode === "login") {
 };
  
 export default EmployerAuth;
+ 

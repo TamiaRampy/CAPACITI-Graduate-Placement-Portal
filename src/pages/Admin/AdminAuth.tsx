@@ -1,35 +1,42 @@
-import React, { useState } from "react";
-import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../../styles/AdminAuth.css";
-
+import { verifyAdmin } from "../../services/adminService";
+ 
 interface Props {
   mode: "login" | "signup";
 }
-
+ 
 const AdminAuth: React.FC<Props> = ({ mode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // <-- Add this
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
+ 
+ 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // navigate('/admin/dashboard');
+      // Debug: log email and password values before sending
+      console.log("Login attempt with email:", email, "password:", password);
+      const isValidAdmin = await verifyAdmin(email, password);
+      if (isValidAdmin) {
+        setError("");
+        navigate('/admin/dashboard');
+      } else {
+        setError("Invalid email or password");
+      }
     } catch (err: any) {
-      setError(err.message);
+      setError("Error verifying admin credentials");
     }
   };
-
+ 
   return (
     <div className="admin-auth-bg">
       <div className="admin-auth-container">
         <Link to="/" className="back-to-welcome-btn">
           <span className="back-arrow-icon" aria-hidden="true">
-            {/* Unique SVG Arrow */}
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
               <circle
                 cx="14"
@@ -72,6 +79,8 @@ const AdminAuth: React.FC<Props> = ({ mode }) => {
           </div>
           <div className="input-group" style={{ position: "relative" }}>
             <input
+              id="password"
+              name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
@@ -87,7 +96,6 @@ const AdminAuth: React.FC<Props> = ({ mode }) => {
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
-                // Eye-off SVG
                 <svg
                   width="20"
                   height="20"
@@ -106,7 +114,6 @@ const AdminAuth: React.FC<Props> = ({ mode }) => {
                   />
                 </svg>
               ) : (
-                // Eye SVG
                 <svg
                   width="20"
                   height="20"
@@ -142,5 +149,7 @@ const AdminAuth: React.FC<Props> = ({ mode }) => {
     </div>
   );
 };
-
+ 
 export default AdminAuth;
+ 
+ 
