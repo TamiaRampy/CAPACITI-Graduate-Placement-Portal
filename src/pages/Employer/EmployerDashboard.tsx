@@ -1,39 +1,39 @@
 import React, { useState } from 'react';
 import styles from './EmployerDashboard.module.css';
 import { useNavigate } from 'react-router-dom';
-
+ 
 const EmployerDashboard = () => {
   const userName = "Mkhuseli Mditshwa";
   const navigate = useNavigate();
-
+ 
   const [stats, setStats] = useState({
     activeJobs: 5,
     applicants: 12,
     interviews: 3,
   });
-
+ 
   const [recentActivity, setRecentActivity] = useState([
     "Job posting 'Frontend Developer' approved",
     "New applicant for 'Backend Engineer'",
     "Interview scheduled for 'Project Manager'",
   ]);
-
+ 
   const handlePostJob = () => {
     navigate('/employer/post-job');
   };
-
+ 
   const handleViewJobs = () => {
     navigate('/employer/view-jobs');
   };
-
+ 
   const handleApplicants = () => {
     navigate('/employer/applicants');
   };
-
+ 
   const handleEditProfile = () => {
     navigate('/employer/edit-profile');
   };
-
+ 
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
       // Implement logout logic here, e.g., clear auth tokens, redirect to login
@@ -41,7 +41,7 @@ const EmployerDashboard = () => {
       navigate('/login');
     }
   };
-
+ 
   return (
     <div className={styles.dashboardContainer}>
       <header className={styles.header}>
@@ -65,11 +65,11 @@ const EmployerDashboard = () => {
           </svg>
         </button>
       </header>
-
+ 
       <p className={styles.welcomeMessage}>
         Welcome back, {userName} <span role="img" aria-label="waving hand">👋</span>
       </p>
-
+ 
       <div className={styles.buttonGrid}>
         <button className={styles.actionButton} onClick={handlePostJob} title="Post a new job">
           <svg
@@ -127,7 +127,7 @@ const EmployerDashboard = () => {
           Edit Profile
         </button>
       </div>
-
+ 
       <div className={styles.statsContainer}>
         <div className={styles.statCard}>
           <div className={styles.statNumber}>{stats.activeJobs}</div>
@@ -142,7 +142,7 @@ const EmployerDashboard = () => {
           <div className={styles.statLabel}>Interviews</div>
         </div>
       </div>
-
+ 
       <section className={styles.recentActivity}>
         <h3 className={styles.sectionTitle}>Recent Activity</h3>
         {recentActivity.length === 0 ? (
@@ -158,5 +158,7 @@ const EmployerDashboard = () => {
     </div>
   );
 };
-
+ 
 export default EmployerDashboard;
+ 
+ 

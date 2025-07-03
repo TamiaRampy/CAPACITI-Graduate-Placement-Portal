@@ -293,3 +293,4 @@ const EmployerAuth: React.FC<Props> = ({ mode }) => {
 };
  
 export default EmployerAuth;
+ 

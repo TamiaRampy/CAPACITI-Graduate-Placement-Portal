@@ -1,0 +1,92 @@
+.container {
+  width: 100vw;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
+  padding: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+ 
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: 2px;
+  font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif;
+}
+ 
+.jobList {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  justify-content: center;
+}
+ 
+.jobItem {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 25px 30px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+ 
+.jobItem:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+ 
+.jobTitle {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: #4a148c;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+ 
+.jobDetail {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #555;
+  line-height: 1.5;
+}
+ 
+.jobLabel {
+  font-weight: 700;
+  color: #333;
+  margin-right: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.applyButton {
+  margin-top: 16px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #4a148c;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.applyButton:hover {
+  background-color: #311b92;
+}
