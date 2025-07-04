@@ -10,6 +10,9 @@ const AdminDashboard = () => {
     jobsPosted: 0,
     placementsThisMonth: 0,
     interviewVolume: 0,
+    totalNotifications: 0,
+    totalApplications: 0,
+    totalAccepted: 0,
   });
 
   useEffect(() => {
@@ -32,12 +35,31 @@ const AdminDashboard = () => {
         );
         const placementsThisMonthSnapshot = await getDocs(placementsThisMonthQuery);
 
+        // Fetch total notifications
+        const notificationsSnapshot = await getDocs(collection(db, "notifications"));
+        const totalNotifications = notificationsSnapshot.size;
+
+        // Fetch total applications
+        const applicationsSnapshot = await getDocs(collection(db, "applications"));
+        const totalApplications = applicationsSnapshot.size;
+
+        // Calculate total accepted from notifications (assuming message contains acceptance)
+        let totalAccepted = 0;
+        notificationsSnapshot.forEach(doc => {
+          const data = doc.data();
+          const message = data.message?.toLowerCase() || "";
+          if (message.includes("accepted")) totalAccepted++;
+        });
+
         setMetrics({
           totalGraduates: graduatesSnapshot.size,
           activeEmployers: employersSnapshot.size,
           jobsPosted: jobsSnapshot.size,
           placementsThisMonth: placementsThisMonthSnapshot.size,
           interviewVolume: interviewsSnapshot.size,
+          totalNotifications,
+          totalApplications,
+          totalAccepted,
         });
       } catch (error) {
         console.error("Error fetching metrics:", error);
@@ -50,7 +72,7 @@ const AdminDashboard = () => {
   return (
     <div className="admin-dashboard-container" style={{ padding: "1rem" }}>
       <h1>Admin Dashboard</h1>
-      <div className="metrics-grid">
+      <div className="metrics-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         <div className="metric-card">
           <h2>{metrics.totalGraduates}</h2>
           <p>Total Graduates</p>
@@ -70,6 +92,18 @@ const AdminDashboard = () => {
         <div className="metric-card">
           <h2>{metrics.interviewVolume}</h2>
           <p>Interview Volume</p>
+        </div>
+        <div className="metric-card">
+          <h2>{metrics.totalNotifications}</h2>
+          <p>Total Notifications</p>
+        </div>
+        <div className="metric-card">
+          <h2>{metrics.totalApplications}</h2>
+          <p>Total Applications</p>
+        </div>
+        <div className="metric-card">
+          <h2>{metrics.totalAccepted}</h2>
+          <p>Total Accepted</p>
         </div>
       </div>
     </div>

@@ -12,8 +12,9 @@ import ForgotPassword from '../pages/ForgotPassword';
 import AdminAuth from '../pages/Admin/AdminAuth';
 import AdminDashboard from '../pages/Admin/AdminDashboard';
 import PlacementTracker from '../pages/Admin/PlacementTracker';
-import EmployerMetrics from '../pages/Admin/EmployerMetrics';
-import ManageUsers from '../pages/Admin/ManageUsers';
+// import EmployerMetrics from '../pages/Admin/EmployerMetrics'; // Removed as per request
+import Graduates from '../pages/Admin/Graduates';
+import HostCompanies from '../pages/Admin/HostCompanies';
 import AdminLayout from '../components/common/AdminLayout';
 import ManageAdmins from '../pages/Admin/ManageAdmins';
 
@@ -32,9 +33,10 @@ function AppRoutes() {
       <Route path="/admin" element={<AdminLayout />}>
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="placement-tracker" element={<PlacementTracker />} />
-        <Route path="employer-metrics" element={<EmployerMetrics />} />
-        <Route path="manage-users" element={<ManageUsers />} />
+        {/* Removed employer-metrics route */}
         <Route path="manage-admins" element={<ManageAdmins />} />
+        <Route path="graduates" element={<Graduates />} />
+        <Route path="host-companies" element={<HostCompanies />} />
       </Route>
 
       <Route path="/forgot-password" element={<ForgotPassword />} />

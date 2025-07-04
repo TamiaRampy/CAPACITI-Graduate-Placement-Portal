@@ -1,0 +1,40 @@
+.employer-metrics-container {
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  width: 1330px;
+  margin: 0 auto;
+}
+
+.employer-metrics-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.employer-metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.employer-metrics-table th,
+.employer-metrics-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.employer-metrics-table th {
+  background-color: #f4f6f8;
+  font-weight: 600;
+  color: #555;
+}
+
+.employer-metrics-table tr:hover {
+  background-color: #fafafa;
+}

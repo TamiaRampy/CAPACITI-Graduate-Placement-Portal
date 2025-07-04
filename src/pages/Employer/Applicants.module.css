@@ -1,0 +1,118 @@
+.container {
+  width: 100vw;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
+  padding: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+ 
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: 2px;
+  font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif;
+}
+ 
+.applicantList {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  justify-content: center;
+}
+ 
+.applicantItem {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 25px 30px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+ 
+.applicantItem:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+ 
+.applicantLabel {
+  font-weight: 700;
+  color: #333;
+  margin-right: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+ 
+.applicantDetail {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #555;
+  line-height: 1.5;
+}
+ 
+.buttonGroup {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+ 
+.acceptButton {
+  background-color: #28a745;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+ 
+.acceptButton:hover {
+  background-color: #218838;
+}
+ 
+.declineButton {
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+ 
+.declineButton:hover {
+  background-color: #c82333;
+}
+ 
+.scheduleButton {
+  background: #0070f3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+ 
+.scheduleButton:hover {
+  background: #005bb5;
+}
+ 
+ 
