@@ -15,6 +15,18 @@
   margin-bottom: 1rem;
 }
 
+.tables-container {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.table-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
 .users-table {
   width: 100%;
   border-collapse: collapse;

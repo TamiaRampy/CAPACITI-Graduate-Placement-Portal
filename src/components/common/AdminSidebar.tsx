@@ -9,8 +9,9 @@ const AdminSidebar = () => {
   const menuItems = [
     { label: 'Dashboard', path: '/admin/dashboard' },
     { label: 'Placement Tracker', path: '/admin/placement-tracker' },
-    { label: 'Employer Metrics', path: '/admin/employer-metrics' },
-    { label: 'Manage Users', path: '/admin/manage-users' },
+    // Removed Employer Metrics menu item
+    { label: 'Graduates', path: '/admin/graduates' },
+    { label: 'Host Companies', path: '/admin/host-companies' },
     { label: 'Manage Admins', path: '/admin/manage-admins' },
   ];
 

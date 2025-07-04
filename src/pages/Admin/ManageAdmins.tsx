@@ -59,6 +59,30 @@ const ManageAdmins: React.FC = () => {
   };
 
   useEffect(() => {
+    const createDefaultAdminIfNotExists = async () => {
+      try {
+        const adminsRef = collection(db, "admins");
+        const q = query(adminsRef, where("email", "==", "admin@gmail.com"));
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+          // Create default admin user in Firebase Auth and Firestore
+          const userCredential = await createUserWithEmailAndPassword(auth, "admin@gmail.com", "admin12345");
+          const user = userCredential.user;
+          await addDoc(adminsRef, {
+            fullname: "ADMIN ADMIN",
+            email: "admin@gmail.com",
+            role: "admin",
+            active: true,
+            uid: user.uid,
+          });
+          alert("Default admin created with email: admin@gmail.com and password: admin12345");
+        }
+      } catch (error) {
+        console.error("Error creating default admin:", error);
+      }
+    };
+
+    createDefaultAdminIfNotExists();
     fetchAdmins();
   }, []);
 
@@ -92,7 +116,16 @@ const ManageAdmins: React.FC = () => {
   };
 
   // Toggle active/inactive
-  const handleToggleActive = async (id: string, status: boolean) => {
+  const handleToggleActive = async (id: string, status: boolean, email: string) => {
+    // Prevent toggling default admin or self
+    if (email === "admin@gmail.com") {
+      alert("Default admin cannot be deactivated.");
+      return;
+    }
+    if (auth.currentUser && auth.currentUser.email === email) {
+      alert("You cannot deactivate yourself.");
+      return;
+    }
     setPending((prev) => ({ ...prev, [id]: true }));
     try {
       await updateDoc(doc(db, "admins", id), { active: !status });
@@ -104,7 +137,16 @@ const ManageAdmins: React.FC = () => {
   };
 
   // Delete admin
-  const handleDeleteAdmin = async (id: string) => {
+  const handleDeleteAdmin = async (id: string, email: string) => {
+    // Prevent deleting default admin or self
+    if (email === "admin@gmail.com") {
+      alert("Default admin cannot be deleted.");
+      return;
+    }
+    if (auth.currentUser && auth.currentUser.email === email) {
+      alert("You cannot delete yourself.");
+      return;
+    }
     if (!confirm("Are you sure you want to delete this admin?")) return;
     setPending((prev) => ({ ...prev, [id]: true }));
     try {
@@ -173,13 +215,13 @@ const ManageAdmins: React.FC = () => {
                 <td>{admin.active ? "Active" : "Inactive"}</td>
                 <td>
                   <button
-                    onClick={() => handleToggleActive(admin.id, admin.active)}
+                    onClick={() => handleToggleActive(admin.id, admin.active, admin.email)}
                     disabled={pending[admin.id]}
                   >
                     {admin.active ? "Deactivate" : "Activate"}
                   </button>
                   <button
-                    onClick={() => handleDeleteAdmin(admin.id)}
+                    onClick={() => handleDeleteAdmin(admin.id, admin.email)}
                     disabled={pending[admin.id]}
                   >
                     Delete
