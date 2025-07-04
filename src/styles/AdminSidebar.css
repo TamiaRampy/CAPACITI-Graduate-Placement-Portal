@@ -8,21 +8,21 @@
   flex-direction: column;
   justify-content: space-between;
 }
- 
+
 .sidebar-title {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   text-align: center;
   font-weight: bold;
 }
- 
+
 .sidebar-menu {
   list-style: none;
   padding: 0;
   margin: 0;
   flex-grow: 1;
 }
- 
+
 .sidebar-menu-item {
   padding: 0.75rem 1rem;
   cursor: pointer;
@@ -30,11 +30,11 @@
   margin-bottom: 0.5rem;
   transition: background-color 0.3s ease;
 }
- 
+
 .sidebar-menu-item:hover {
   background-color: #34495e;
 }
- 
+
 .sidebar-logout-button {
   background-color: #e74c3c;
   border: none;
@@ -45,9 +45,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
- 
+
 .sidebar-logout-button:hover {
   background-color: #c0392b;
 }
- 
- 

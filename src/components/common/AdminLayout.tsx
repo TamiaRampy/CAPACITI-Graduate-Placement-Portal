@@ -1,9 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-// Make sure the file exists at the specified path, or update the path if needed
 import AdminSidebar from "./AdminSidebar";
-import '../styles/AdminSidebar.css';
- 
+import "../../styles/AdminDashboard.css";
+
 const AdminLayout: React.FC = () => {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
@@ -14,6 +13,5 @@ const AdminLayout: React.FC = () => {
     </div>
   );
 };
- 
+
 export default AdminLayout;
- 

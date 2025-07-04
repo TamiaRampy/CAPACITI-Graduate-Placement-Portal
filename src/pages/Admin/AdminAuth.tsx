@@ -2,19 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/AdminAuth.css";
 import { verifyAdmin } from "../../services/adminService";
- 
+
 interface Props {
   mode: "login" | "signup";
 }
- 
+
 const AdminAuth: React.FC<Props> = ({ mode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
- 
- 
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -31,7 +31,7 @@ const AdminAuth: React.FC<Props> = ({ mode }) => {
       setError("Error verifying admin credentials");
     }
   };
- 
+
   return (
     <div className="admin-auth-bg">
       <div className="admin-auth-container">
@@ -149,7 +149,5 @@ const AdminAuth: React.FC<Props> = ({ mode }) => {
     </div>
   );
 };
- 
+
 export default AdminAuth;
- 
- 

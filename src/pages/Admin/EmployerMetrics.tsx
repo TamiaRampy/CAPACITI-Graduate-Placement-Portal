@@ -1,73 +1,93 @@
 import React, { useEffect, useState } from "react";
-import "./../../styles/EmployerMetrics.css";
-import { collection, getDocs, DocumentData } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
- 
-interface Employer {
-  id: string;
-  name: string;
-  jobsPosted: number;
-  views: number;
-  interviewsScheduled: number;
-  hires: number;
+import "../../styles/ManageUsers.css";
+
+interface MetricsSummary {
+  totalApplications: number;
+  totalInterviews: number;
+  totalAccepted: number;
+  totalRejected: number;
+  totalNotifications: number;
 }
- 
+
 const EmployerMetrics: React.FC = () => {
-  const [employerData, setEmployerData] = useState<Employer[]>([]);
- 
+  const [metrics, setMetrics] = useState<MetricsSummary>({
+    totalApplications: 0,
+    totalInterviews: 0,
+    totalAccepted: 0,
+    totalRejected: 0,
+    totalNotifications: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchEmployerData = async () => {
+    const fetchMetrics = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "employers"));
-        const data: Employer[] = snapshot.docs.map(doc => {
-          const d = doc.data() as DocumentData;
-          return {
-            id: doc.id,
-            name: d.name || "Unknown",
-            jobsPosted: d.jobsPosted || 0,
-            views: d.views || 0,
-            interviewsScheduled: d.interviewsScheduled || 0,
-            hires: d.hires || 0,
-          };
+        // Fetch total applications
+        const applicationsSnapshot = await getDocs(collection(db, "applications"));
+        const totalApplications = applicationsSnapshot.size;
+
+        // Fetch total interviews
+        const interviewsSnapshot = await getDocs(collection(db, "interviews"));
+        const totalInterviews = interviewsSnapshot.size;
+
+        // Fetch total accepted and rejected from notifications (assuming message contains acceptance/rejection)
+        const notificationsSnapshot = await getDocs(collection(db, "notifications"));
+        let totalAccepted = 0;
+        let totalRejected = 0;
+        notificationsSnapshot.forEach(doc => {
+          const data = doc.data();
+          const message = data.message?.toLowerCase() || "";
+          if (message.includes("accepted")) totalAccepted++;
+          if (message.includes("rejected")) totalRejected++;
         });
-        setEmployerData(data);
+        const totalNotifications = notificationsSnapshot.size;
+
+        setMetrics({
+          totalApplications,
+          totalInterviews,
+          totalAccepted,
+          totalRejected,
+          totalNotifications,
+        });
       } catch (error) {
-        console.error("Error fetching employer data:", error);
+        console.error("Error fetching metrics:", error);
+      } finally {
+        setLoading(false);
       }
     };
- 
-    fetchEmployerData();
+
+    fetchMetrics();
   }, []);
- 
+
+  if (loading) {
+    return <div className="manage-users-container"><h2>Loading Employer Metrics...</h2></div>;
+  }
+
   return (
-    <div className="employer-metrics-container">
-      <h1>Employer Engagement Metrics</h1>
-      <table className="employer-metrics-table">
+    <div className="manage-users-container">
+      <h1>Employer Metrics Summary</h1>
+      <table className="users-table">
         <thead>
           <tr>
-            <th>Employer</th>
-            <th>Jobs Posted</th>
-            <th>Views</th>
-            <th>Interviews Scheduled</th>
-            <th>Hires</th>
+            <th>Total Applications</th>
+            <th>Total Interviews</th>
+            <th>Total Accepted</th>
+            <th>Total Notifications</th>
           </tr>
         </thead>
         <tbody>
-          {employerData.map((emp) => (
-            <tr key={emp.id}>
-              <td>{emp.name}</td>
-              <td>{emp.jobsPosted}</td>
-              <td>{emp.views}</td>
-              <td>{emp.interviewsScheduled}</td>
-              <td>{emp.hires}</td>
-            </tr>
-          ))}
+          <tr>
+            <td>{metrics.totalApplications}</td>
+            <td>{metrics.totalInterviews}</td>
+            <td>{metrics.totalAccepted}</td>
+            <td>{metrics.totalNotifications}</td>
+          </tr>
         </tbody>
       </table>
     </div>
   );
 };
- 
+
 export default EmployerMetrics;
- 
- 

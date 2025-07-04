@@ -9,12 +9,24 @@
   width: 1330px;
   margin: 0 auto;
 }
- 
+
 .manage-users-container h1 {
   width: 100%;
   margin-bottom: 1rem;
 }
- 
+
+.tables-container {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.table-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
 .users-table {
   width: 100%;
   border-collapse: collapse;
@@ -23,36 +35,36 @@
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
- 
+
 .users-table th,
 .users-table td {
   padding: 0.75rem 1rem;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
- 
+
 .users-table th {
   background-color: #f4f6f8;
   font-weight: 600;
   color: #555;
 }
- 
+
 .users-table tr:hover {
   background-color: #fafafa;
 }
- 
+
 .users-table tr.inactive {
   background-color: #fceaea;
   color: #a00;
 }
- 
+
 .users-table select {
   padding: 0.3rem 0.5rem;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1rem;
 }
- 
+
 .users-table button {
   margin-right: 0.5rem;
   padding: 0.3rem 0.6rem;
@@ -64,9 +76,7 @@
   font-size: 0.9rem;
   transition: background-color 0.3s ease;
 }
- 
+
 .users-table button:hover {
   background-color: #e65b4f;
 }
- 
- 
